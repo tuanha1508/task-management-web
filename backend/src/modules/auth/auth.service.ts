@@ -1,5 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -8,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
@@ -32,7 +30,7 @@ export class AuthService {
     const payload = { username: user.username, sub: user.id };
     
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: 'dummy-token', // Simplified for now
       user: {
         id: user.id,
         username: user.username,
