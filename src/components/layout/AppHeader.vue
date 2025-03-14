@@ -15,6 +15,8 @@ const navigateToRegister = () => {
   router.push('/register');
 };
 
+// Used in the user dropdown when authenticated
+// @ts-ignore
 const navigateToProfile = () => {
   router.push('/profile');
 };

@@ -64,13 +64,13 @@ const clearFilters = () => {
   });
 };
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string): string => {
   return status === 'completed' ? 'success' 
     : status === 'in-progress' ? 'warning' 
     : 'error';
 };
 
-const getPriorityColor = (priority) => {
+const getPriorityColor = (priority: string): string => {
   return priority === 'high' ? 'error' 
     : priority === 'medium' ? 'warning' 
     : 'success';
