@@ -4,10 +4,545 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue + TS</title>
+    <title>TaskMaster</title>
+    <style>
+      /* More aggressive scrollbar hiding */
+      html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden !important;
+        overscroll-behavior: none;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden !important;
+        background: linear-gradient(135deg, #050505 0%, #0a0a0a 50%, #050505 100%);
+        font-family: sans-serif;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+      
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      ::-webkit-scrollbar {
+        width: 0 !important;
+        display: none !important;
+      }
+      
+      /* Hide scrollbar for IE, Edge and Firefox */
+      html, body {
+        -ms-overflow-style: none !important;  /* IE and Edge */
+        scrollbar-width: none !important;  /* Firefox */
+      }
+      
+      /* Restore scrolling when app is ready */
+      .app-ready body {
+        overflow: auto !important;
+        position: static;
+        height: auto;
+      }
+      
+      /* Initial loading styles */
+      #app-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 1.2s cubic-bezier(0.19, 1, 0.22, 1), 
+                    transform 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+                    filter 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        background: linear-gradient(135deg, #050505 0%, #0a0a0a 50%, #050505 100%);
+        transform-origin: center;
+        will-change: opacity, transform, filter;
+      }
+      
+      /* 3D Cube Animation */
+      :root {
+        /* Updated colors to match introduction page theme */
+        --primary-pink: #FF0080;
+        --primary-purple: #DA22FF;
+        --secondary-purple: #9733EE;
+        --tertiary-purple: #7C4DFF;
+        --cube-size: 80px;
+        --animation-duration: 2s;
+      }
+      
+      .scene {
+        position: relative;
+        z-index: 2;
+        height: calc(var(--cube-size) * 2.75);
+        width: calc(var(--cube-size) * 2.75);
+        display: grid;
+        place-items: center;
+        margin-bottom: 2rem;
+        transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      
+      .cube-wrapper {
+        transform-style: preserve-3d;
+        animation: bouncing var(--animation-duration) infinite;
+      }
+      
+      .cube {
+        transform-style: preserve-3d;
+        transform: rotateX(45deg) rotateZ(45deg);
+        animation: rotation var(--animation-duration) infinite;
+      }
+      
+      .cube-faces {
+        transform-style: preserve-3d;
+        height: var(--cube-size);
+        width: var(--cube-size);
+        position: relative;
+        transform-origin: 0 0;
+        transform: translateX(0) translateY(0) translateZ(calc(var(--cube-size) / -2));
+      }
+      
+      .cube-face {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--tertiary-purple), var(--secondary-purple));
+        border: none;
+        box-shadow: 0 0 15px rgba(151, 51, 238, 0.2) inset;
+      }
+      
+      .cube-face.shadow {
+        transform: translateZ(calc(var(--cube-size) * -1));
+        animation: bouncing-shadow var(--animation-duration) infinite;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+      }
+      
+      .cube-face.top {
+        transform: translateZ(var(--cube-size));
+        background: linear-gradient(45deg, var(--primary-purple), var(--primary-pink));
+      }
+      
+      .cube-face.front {
+        transform-origin: 0 50%;
+        transform: rotateY(-90deg);
+        background: linear-gradient(to bottom, var(--secondary-purple), var(--tertiary-purple));
+      }
+      
+      .cube-face.back {
+        transform-origin: 0 50%;
+        transform: rotateY(-90deg) translateZ(calc(var(--cube-size) * -1));
+        background: linear-gradient(to top, var(--primary-purple), var(--tertiary-purple));
+      }
+      
+      .cube-face.right {
+        transform-origin: 50% 0;
+        transform: rotateX(-90deg) translateY(calc(var(--cube-size) * -1));
+        background: linear-gradient(to right, var(--secondary-purple), var(--primary-purple));
+      }
+      
+      .cube-face.left {
+        transform-origin: 50% 0;
+        transform: rotateX(-90deg) translateY(calc(var(--cube-size) * -1)) translateZ(var(--cube-size));
+        background: linear-gradient(to left, var(--primary-pink), var(--primary-purple));
+      }
+      
+      @keyframes rotation {
+        0% {
+          transform: rotateX(45deg) rotateY(0) rotateZ(45deg);
+          animation-timing-function: cubic-bezier(0.17,0.84,0.44,1);
+        }
+        50% {
+          transform: rotateX(45deg) rotateY(0) rotateZ(225deg);
+          animation-timing-function: cubic-bezier(0.76,0.05,0.86,0.06);
+        }
+        100% {
+          transform: rotateX(45deg) rotateY(0) rotateZ(405deg);
+          animation-timing-function: cubic-bezier(0.17,0.84,0.44,1);
+        }
+      }
+      
+      @keyframes bouncing {
+        0% {
+          transform: translateY(calc(var(--cube-size) * -0.5));
+          animation-timing-function: cubic-bezier(0.76, 0.05, 0.86, 0.06);
+        }
+        45% {
+          transform: translateY(calc(var(--cube-size) * 0.5));
+          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        100% {
+          transform: translateY(calc(var(--cube-size) * -0.5));
+          animation-timing-function: cubic-bezier(0.76, 0.05, 0.86, 0.06);
+        }
+      }
+      
+      @keyframes bouncing-shadow {
+        0% {
+          transform: translateZ(calc(var(--cube-size) * -1)) scale(1.3);
+          animation-timing-function: cubic-bezier(0.76, 0.05, 0.86, 0.06);
+          opacity: .05;
+          background: radial-gradient(circle at center, rgba(218, 34, 255, 0.3) 0%, rgba(151, 51, 238, 0.1) 50%, transparent 70%);
+        }
+        45% {
+          transform: translateZ(0);
+          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+          opacity: .3;
+          background: radial-gradient(circle at center, rgba(218, 34, 255, 0.5) 0%, rgba(151, 51, 238, 0.2) 60%, transparent 80%);
+        }
+        100% {
+          transform: translateZ(calc(var(--cube-size) * -1)) scale(1.3);
+          animation-timing-function: cubic-bezier(0.76, 0.05, 0.86, 0.06);
+          opacity: .05;
+          background: radial-gradient(circle at center, rgba(218, 34, 255, 0.3) 0%, rgba(151, 51, 238, 0.1) 50%, transparent 70%);
+        }
+      }
+      
+      /* Loading text animation */
+      .loading-text {
+        position: relative;
+        font-size: 1.5rem;
+        color: white;
+        font-weight: 300;
+        letter-spacing: 0.2rem;
+        text-transform: uppercase;
+        transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), 
+                    opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      
+      .loading-text::after {
+        content: '';
+        position: absolute;
+        bottom: -0.5rem;
+        left: 50%;
+        width: 0%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple));
+        transform: translateX(-50%);
+        animation: lineExpand 2s ease-in-out infinite;
+      }
+      
+      @keyframes lineExpand {
+        0%, 100% {
+          width: 0%;
+        }
+        50% {
+          width: 100%;
+        }
+      }
+      
+      /* App title */
+      .app-title {
+        margin-bottom: 3rem;
+        text-align: center;
+        opacity: 1;
+        transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), 
+                    opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        position: relative;
+      }
+      
+      /* Improved title appearance with simpler approach */
+      .app-title h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        text-align: center;
+      }
+      
+      .app-title h1 span {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: letterAppear 0.5s cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+        position: relative;
+      }
+      
+      /* Apply a gradient effect manually across all letters */
+      .app-title h1 span:nth-child(1) { 
+        color: var(--primary-pink);
+        animation-delay: 0.0s; 
+      }
+      .app-title h1 span:nth-child(2) { 
+        color: #F5008B; /* Between pink and purple */
+        animation-delay: 0.05s; 
+      }
+      .app-title h1 span:nth-child(3) { 
+        color: #EB0096; /* Closer to purple */
+        animation-delay: 0.1s; 
+      }
+      .app-title h1 span:nth-child(4) { 
+        color: #E100A2; /* More purple */
+        animation-delay: 0.15s; 
+      }
+      .app-title h1 span:nth-child(5) { 
+        color: var(--primary-purple);
+        animation-delay: 0.2s; 
+      }
+      .app-title h1 span:nth-child(6) { 
+        color: #BE2AF9; /* Between primary and secondary purple */
+        animation-delay: 0.25s; 
+      }
+      .app-title h1 span:nth-child(7) { 
+        color: var(--secondary-purple);
+        animation-delay: 0.3s; 
+      }
+      .app-title h1 span:nth-child(8) { 
+        color: #8C3DF1; /* Between secondary and tertiary purple */
+        animation-delay: 0.35s; 
+      }
+      .app-title h1 span:nth-child(9) { 
+        color: var(--tertiary-purple);
+        animation-delay: 0.4s; 
+      }
+      .app-title h1 span:nth-child(10) { 
+        color: #9B41A6; /* Back toward purple */
+        animation-delay: 0.45s; 
+      }
+      
+      @keyframes letterAppear {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .app-tagline {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 0.5rem;
+        opacity: 0;
+        animation: fadeIn 0.8s ease forwards 0.6s;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Enhanced transition effects */
+      .app-transition-start #app-loading {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+      }
+      
+      .app-transition-start .app-title {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      
+      .app-transition-start .scene {
+        transform: translateY(0) scale(1);
+      }
+      
+      .app-transition-start .loading-text {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      
+      /* Hide loading screen when app is loaded with enhanced transition */
+      .app-ready #app-loading {
+        opacity: 0;
+        pointer-events: none;
+        filter: blur(10px);
+        transform: scale(1.1);
+      }
+      
+      .app-ready .app-title {
+        transform: translateY(-20px);
+        opacity: 0;
+        transition-delay: 0.1s;
+      }
+      
+      .app-ready .app-title h1 span {
+        animation: none;
+        opacity: 1;
+        transform: translateY(0);
+        transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
+                    opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      
+      .app-ready .scene {
+        transform: translateY(-20px) scale(0.95);
+      }
+      
+      .app-ready .loading-text {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      
+      .app-loaded #app-loading {
+        display: none;
+      }
+      
+      /* Introduction page reveal effect */
+      #app {
+        opacity: 0;
+        transform: scale(0.98);
+        transition: opacity 1s ease-out 0.5s, transform 1s ease-out 0.5s;
+      }
+      
+      .app-ready #app {
+        opacity: 1;
+        transform: scale(1);
+      }
+    </style>
   </head>
-  <body>
+  <body class="app-transition-start">
     <div id="app"></div>
+    
+    <!-- Loading screen with 3D cube animation -->
+    <div id="app-loading">
+      <div class="app-title">
+        <h1>
+          <span>T</span>
+          <span>a</span>
+          <span>s</span>
+          <span>k</span>
+          <span>M</span>
+          <span>a</span>
+          <span>s</span>
+          <span>t</span>
+          <span>e</span>
+          <span>r</span>
+        </h1>
+        <div class="app-tagline">Organizing Your Tasks EcoSystem with Ease</div>
+      </div>
+      
+      <div class="scene">
+        <div class="cube-wrapper">
+          <div class="cube">
+            <div class="cube-faces">
+              <div class="cube-face shadow"></div>
+              <div class="cube-face bottom"></div>
+              <div class="cube-face top"></div>
+              <div class="cube-face left"></div>
+              <div class="cube-face right"></div>
+              <div class="cube-face back"></div>
+              <div class="cube-face front"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="loading-text">Loading</div>
+    </div>
+    
     <script type="module" src="/src/main.ts"></script>
+    <script>
+      (function() {
+        // Ensure title is visible immediately
+        document.addEventListener('DOMContentLoaded', function() {
+          // Force title visibility
+          const titleSpans = document.querySelectorAll('.app-title h1 span');
+          if (titleSpans.length) {
+            setTimeout(() => {
+              titleSpans.forEach((span, index) => {
+                // Ensure each letter is visible even if animation fails
+                span.style.opacity = '1';
+                span.style.transform = 'translateY(0)';
+              });
+            }, 800); // Backup to ensure visibility after animations should have run
+          }
+        });
+        
+        // Track when the page started loading
+        const startTime = Date.now();
+        
+        // Force loading screen to show for at least 3 seconds
+        const minLoadingTime = 3000; // 3 seconds
+        
+        // Function to remove loading screen with enhanced transition
+        const hideLoadingScreen = () => {
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+          console.log('Hiding loading screen after:', remainingTime + 'ms delay');
+          
+          // Initialize the starting state (already set in HTML, but ensure it's applied)
+          document.body.classList.add('app-transition-start');
+          
+          // Wait for minimum time to elapse before hiding
+          setTimeout(() => {
+            // First remove the transition start class to ensure proper animation
+            document.body.classList.remove('app-transition-start');
+            
+            // Small delay to ensure the browser processes the class removal
+            setTimeout(() => {
+              // Start the transition to the app
+              document.body.classList.add('app-ready');
+              
+              // Reset any inline overflow styles that might have been added
+              document.documentElement.style.overflow = '';
+              document.body.style.overflow = '';
+              
+              console.log('Added app-ready class');
+              
+              // After fade transition, remove loading screen completely
+              setTimeout(() => {
+                document.body.classList.add('app-loaded');
+                // Final check to make sure scrolling is properly restored
+                document.documentElement.style.overflow = '';
+                document.body.style.overflow = '';
+                console.log('Added app-loaded class');
+              }, 1500);
+            }, 50);
+          }, remainingTime);
+        };
+        
+        // Monitor for changes in the DOM to detect when Vue has rendered
+        let observer;
+        
+        const checkApp = function() {
+          // Check if the app div has content
+          if (document.getElementById('app') && document.getElementById('app').children.length > 0) {
+            console.log('App content detected, preparing to hide loading screen');
+            hideLoadingScreen();
+            
+            // Stop checking
+            if (observer) {
+              observer.disconnect();
+            }
+            return true;
+          }
+          return false;
+        };
+        
+        // Listen for custom event from main.ts
+        window.addEventListener('app-initialized', function() {
+          console.log('Received app-initialized event');
+          hideLoadingScreen();
+          if (observer) {
+            observer.disconnect();
+          }
+        });
+        
+        // First check immediately
+        if (!checkApp()) {
+          console.log('No app content yet, setting up observer');
+          // Set up mutation observer to watch for app content
+          observer = new MutationObserver(function(mutations) {
+            if (checkApp()) {
+              observer.disconnect();
+            }
+          });
+          
+          // Start observing
+          observer.observe(document.body, { childList: true, subtree: true });
+          
+          // Fallback - hide after 4 seconds regardless
+          setTimeout(() => {
+            console.log('Fallback timer triggered');
+            hideLoadingScreen();
+            if (observer) {
+              observer.disconnect();
+            }
+          }, 4000);
+        }
+      })();
+    </script>
   </body>
 </html>

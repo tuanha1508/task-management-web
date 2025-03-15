@@ -1,11 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router'
+// Import Introduction component directly to avoid lazy loading
+import Introduction from './views/Introduction.vue'
 
 // Define routes
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Introduction',
-    component: () => import('./views/Introduction.vue'),
+    component: Introduction, // Use directly imported component instead of lazy loading
     meta: { 
       requiresAuth: false,
       hideNav: true // This will help us hide navigation for the intro page
@@ -64,7 +66,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: () => import('./views/NotFound.vue')
+    redirect: '/'
   }
 ]
 

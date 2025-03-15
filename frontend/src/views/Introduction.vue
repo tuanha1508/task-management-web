@@ -10,11 +10,8 @@ const fullText = "Master";
 // When the Introduction page loads, check if we're on the root path and force logout
 // This ensures that the Introduction page is always visible to non-authenticated users
 onMounted(() => {
-  // If we're at the root path (introduction page), clear any existing auth
-  if (window.location.pathname === '/') {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
-  }
+  // Remove the forced logout code that was clearing authentication
+  // The typing animation will still work
   
   // Simple typing animation that types out the text character by character once
   let charIndex = 0;

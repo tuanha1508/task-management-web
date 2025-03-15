@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import AppHeader from './components/layout/AppHeader.vue';
 import AppSidebar from './components/layout/AppSidebar.vue';
 import AppFooter from './components/layout/AppFooter.vue';
 
 const route = useRoute();
+const router = useRouter();
 const drawer = ref(true);
 
 const toggleDrawer = () => {
