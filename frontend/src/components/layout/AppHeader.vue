@@ -28,6 +28,14 @@ const checkAuthStatus = () => {
   }
 };
 
+const navigateToHome = () => {
+  if (isAuthenticated.value) {
+    router.push('/dashboard');
+  } else {
+    router.push('/');
+  }
+};
+
 const navigateToLogin = () => {
   router.push('/login');
 };
@@ -59,12 +67,14 @@ const logout = () => {
     <v-app-bar-nav-icon @click="$emit('toggle-drawer')"></v-app-bar-nav-icon>
     
     <v-toolbar-title class="text-h6 font-weight-bold">
-      <router-link 
-        :to="isAuthenticated ? '/dashboard' : '/'" 
-        class="text-decoration-none text-white"
+      <v-btn
+        text
+        @click="navigateToHome"
+        class="text-decoration-none text-white pa-0"
+        style="text-transform: none; letter-spacing: normal;"
       >
         Task Management
-      </router-link>
+      </v-btn>
     </v-toolbar-title>
     
     <v-spacer></v-spacer>

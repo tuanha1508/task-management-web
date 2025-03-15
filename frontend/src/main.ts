@@ -6,9 +6,8 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 // @ts-ignore
 import 'vuetify/styles'
-// Commenting out Material Design Icons font to avoid 403 errors
-// We're using custom elements instead of icons in the introduction page
-// import '@mdi/font/css/materialdesignicons.css'
+// Import our custom MDI icons CSS (with local font files) instead of from node_modules
+import './styles/mdi-icons.css'
 import './style.css'
 import App from './App.vue'
 import routes from './router'
@@ -19,11 +18,8 @@ const vuetify = createVuetify({
   directives,
   theme: {
     defaultTheme: 'light'
-  },
-  // Disable defaultSet to avoid loading Material Design Icons
-  icons: {
-    defaultSet: 'none',
   }
+  // No custom icons configuration needed when using the default MDI font
 })
 
 // Create Router instance
@@ -62,9 +58,9 @@ router.beforeEach((to, _from, next) => {
 // Create Pinia instance
 const pinia = createPinia()
 
-// Create and mount the app
+// Create and mount the app - IMPORTANT: Router must be installed before Vuetify
 const app = createApp(App)
-app.use(router)
+app.use(router) // Install router first
 app.use(pinia)
 app.use(vuetify)
 app.mount('#app')
