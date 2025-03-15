@@ -5,6 +5,62 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaskMaster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Script to suppress console warnings that are not important -->
+    <script>
+      (function() {
+        // These warnings appear before the page fully loads, so we need to intercept them immediately
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        const originalConsoleLog = console.log;
+        
+        // Define warnings to suppress
+        const suppressPatterns = [
+          'Permissions-Policy header',
+          'browsing-topics',
+          'run-ad-auction',
+          'join-ad-interest-group',
+          'private-state-token',
+          'private-aggregation',
+          'attribution-reporting',
+          'Error with Permissions-Policy',
+          'Origin trial controlled feature',
+          'Blocked',
+          'blocked',
+          'Content Security Policy',
+          'will try to open idb now',
+          'content.bundle.js'
+        ];
+        
+        // Helper function to check if message should be suppressed
+        function shouldSuppress(args) {
+          if (!args || !args[0] || typeof args[0] !== 'string') return false;
+          
+          const message = args[0];
+          return suppressPatterns.some(pattern => message.includes(pattern));
+        }
+        
+        // Override error logging
+        console.error = function() {
+          if (shouldSuppress(arguments)) return;
+          return originalConsoleError.apply(console, arguments);
+        };
+        
+        // Override warning logging
+        console.warn = function() {
+          if (shouldSuppress(arguments)) return;
+          return originalConsoleWarn.apply(console, arguments);
+        };
+        
+        // Override info logging
+        console.log = function() {
+          if (shouldSuppress(arguments)) return;
+          return originalConsoleLog.apply(console, arguments);
+        };
+      })();
+    </script>
+    
     <style>
       /* More aggressive scrollbar hiding */
       html {
