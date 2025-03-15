@@ -38,10 +38,14 @@ onMounted(() => {
 
 const navigateToLogin = () => {
   console.log('Navigating to login page from Introduction');
-  // First clear any authentication to prevent redirect loops
+  // First handle any auth state if needed
   localStorage.removeItem('isAuthenticated');
-  // Use direct navigation to the path, not the route name
-  window.location.href = '/login';
+  // Use the router directly instead of window.location
+  router.push('/login').catch(err => {
+    console.error('Navigation failed:', err);
+    // Fallback approach if router navigation fails
+    window.location.href = '/login';
+  });
 };
 
 const navigateToRegister = () => {
@@ -104,13 +108,6 @@ const navigateToAbout = () => {
           @click="navigateToAbout"
         >
           ABOUT MORE
-        </button>
-        <!-- Add login button for better visibility -->
-        <button 
-          class="login-button"
-          @click="navigateToLogin"
-        >
-          LOGIN
         </button>
       </div>
     </div>
@@ -449,47 +446,6 @@ const navigateToAbout = () => {
 }
 
 .about-button:hover::before {
-  transform: translateX(100%);
-}
-
-/* Login button */
-.login-button {
-  background: linear-gradient(90deg, #DA22FF, #9733EE);
-  color: #fff;
-  border: none;
-  padding: 1.2rem 3rem;
-  letter-spacing: 0.5px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  text-transform: uppercase;
-  font-weight: 700;
-  border-radius: 50px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 20px rgba(218, 34, 255, 0.2);
-  position: relative;
-  overflow: hidden;
-  font-family: 'Nunito', sans-serif;
-  margin-left: 20px;
-}
-
-.login-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.login-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(218, 34, 255, 0.3);
-}
-
-.login-button:hover::before {
   transform: translateX(100%);
 }
 
