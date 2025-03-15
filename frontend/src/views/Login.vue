@@ -33,8 +33,18 @@ const login = async () => {
     // For demo purposes, we'll just accept any valid email/password
     console.log('Logging in with:', { email: email.value, password: '********', rememberMe: rememberMe.value });
     
-    // Redirect to home page after successful login
-    router.push('/');
+    // Store authentication status
+    localStorage.setItem('isAuthenticated', 'true');
+    
+    // Store user info (in a real app, this would come from the API)
+    localStorage.setItem('user', JSON.stringify({
+      email: email.value,
+      name: email.value.split('@')[0],
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.value.split('@')[0])}&background=random`
+    }));
+    
+    // Redirect to dashboard page after successful login
+    router.push('/dashboard');
   } catch (err) {
     console.error('Login error:', err);
     error.value = 'Invalid email or password';

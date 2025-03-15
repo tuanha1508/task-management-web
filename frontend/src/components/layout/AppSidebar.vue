@@ -13,7 +13,7 @@ const drawer = computed({
 });
 
 const menuItems = [
-  { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/' },
+  { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard' },
   { title: 'All Tasks', icon: 'mdi-format-list-checks', to: '/tasks' },
   { title: 'My Tasks', icon: 'mdi-account-check', to: '/tasks?filter=my' },
   { title: 'Teams', icon: 'mdi-account-group', to: '/teams' },
