@@ -62,7 +62,7 @@ const login = async () => {
     <!-- Video Background - using an import reference for proper Vite handling -->
     <video autoplay muted loop id="background-video" class="background-video">
       <!-- The src will be handled at runtime when the video is actually added -->
-      <!-- <source src="..." type="video/mp4"> -->
+      <source src="/videos/task-management-bg.mp4" type="video/mp4">
     </video>
     
     <!-- Static background that shows if video fails to load -->
@@ -226,14 +226,14 @@ html, body {
 }
 
 .login-card {
-  background: rgba(24, 24, 27, 0.7); /* Transparent background */
-  backdrop-filter: blur(10px); /* Add blur effect for better readability */
+  background: rgba(24, 24, 27, 0.4); /* Increased transparency from 0.7 to 0.4 */
+  backdrop-filter: blur(15px); /* Increased blur effect for better readability */
   border-radius: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
   overflow: hidden;
   padding: 1.5rem;
   animation: cardAppear 0.5s ease forwards;
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Add subtle border */
+  border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly more visible border */
 }
 
 .app-title {
@@ -243,6 +243,7 @@ html, body {
   color: #fff;
   margin-bottom: 1.2rem;
   letter-spacing: -0.2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Added text shadow for better readability */
 }
 
 @keyframes cardAppear {
@@ -257,14 +258,16 @@ h1 {
   color: #ffffff;
   text-align: center;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Added text shadow for better readability */
 }
 
 .description {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.85); /* Increased opacity for better visibility */
   font-size: 0.85rem;
   text-align: center;
   margin: 0 0 1.5rem 0;
   line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); /* Added text shadow for better readability */
 }
 
 .error-alert {
@@ -289,16 +292,17 @@ h1 {
 label {
   display: block;
   margin-bottom: 0.3rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
   font-size: 0.8rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); /* Added text shadow for better readability */
 }
 
 input {
   width: 100%;
   padding: 0.8rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(10, 10, 10, 0.8); /* Slightly darker for readability */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(10, 10, 10, 0.7); /* Kept input slightly more opaque for readability */
   border-radius: 12px;
   color: white;
   font-size: 0.9rem;
