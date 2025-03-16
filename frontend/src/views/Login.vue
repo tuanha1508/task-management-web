@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 // We'll use a dynamic import approach when the actual video is added
@@ -11,6 +11,23 @@ const password = ref('');
 const rememberMe = ref(false);
 const isLoading = ref(false);
 const error = ref('');
+const isPageVisible = ref(false); // For page transition animation
+
+onMounted(() => {
+  // Trigger the enter animation after component is mounted
+  setTimeout(() => {
+    isPageVisible.value = true;
+  }, 50);
+});
+
+// Handle navigation to register page with animation
+const navigateToRegister = (event: Event) => {
+  event.preventDefault();
+  isPageVisible.value = false;
+  setTimeout(() => {
+    router.push('/register');
+  }, 500); // Match the animation duration
+};
 
 const rules = {
   email: [
@@ -25,7 +42,7 @@ const rules = {
 
 const login = async () => {
   if (!email.value || !password.value) return;
-  
+  console.log("Fuck you who see my console log");
   isLoading.value = true;
   error.value = '';
   
@@ -46,8 +63,12 @@ const login = async () => {
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.value.split('@')[0])}&background=random`
     }));
     
-    // Redirect to dashboard page after successful login
-    router.push('/dashboard');
+    // Animate before redirecting
+    isPageVisible.value = false;
+    setTimeout(() => {
+      // Redirect to dashboard page after successful login
+      router.push('/dashboard');
+    }, 500);
   } catch (err) {
     console.error('Login error:', err);
     error.value = 'Invalid email or password';
@@ -73,7 +94,7 @@ const login = async () => {
     
     <div class="login-glow"></div>
     <div class="login-wrapper">
-      <div class="login-card">
+      <div class="login-card" :class="{ 'page-visible': isPageVisible }">
         <div class="app-title">TaskMaster</div>
         
         <h1>Log In</h1>
@@ -145,7 +166,7 @@ const login = async () => {
         </div>
         
         <div class="signup-link">
-          Already have an account? <router-link to="/register">Sign up</router-link>
+          Already have an account? <a href="/register" @click="navigateToRegister">Sign up</a>
         </div>
       </div>
     </div>
@@ -232,8 +253,18 @@ html, body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
   overflow: hidden;
   padding: 1.5rem;
-  animation: cardAppear 0.5s ease forwards;
+  animation: none; /* Remove previous animation */
   border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly more visible border */
+  
+  /* Initial state for enter/leave animations */
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.login-card.page-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .app-title {
@@ -287,7 +318,14 @@ h1 {
 
 .form-group {
   margin-bottom: 1rem;
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: fadeInRight 0.5s forwards;
+  animation-delay: calc(0.1s * var(--i, 1));
 }
+
+.form-group:nth-child(1) { --i: 1; }
+.form-group:nth-child(2) { --i: 2; }
 
 label {
   display: block;
@@ -324,6 +362,9 @@ input::placeholder {
 .forgot-password {
   text-align: right;
   margin: 0.2rem 0 1.2rem;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  animation-delay: 0.3s;
 }
 
 .forgot-password a {
@@ -331,11 +372,28 @@ input::placeholder {
   text-decoration: none;
   font-size: 0.8rem;
   transition: color 0.3s ease;
+  position: relative;
 }
 
 .forgot-password a:hover {
   color: rgba(138, 43, 226, 1);
   text-decoration: underline;
+}
+
+.forgot-password a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: rgba(138, 43, 226, 1);
+  transition: width 0.3s ease;
+}
+
+.forgot-password a:hover::after {
+  width: 100%;
+  text-decoration: none;
 }
 
 .login-button {
@@ -353,6 +411,9 @@ input::placeholder {
   font-family: 'Nunito', sans-serif;
   letter-spacing: 0.5px;
   margin-bottom: 1.2rem;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  animation-delay: 0.4s;
 }
 
 .login-button:hover:not(:disabled) {
@@ -387,6 +448,9 @@ input::placeholder {
   justify-content: center;
   gap: 1.5rem;
   margin-bottom: 1.2rem;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  animation-delay: 0.5s;
 }
 
 .social-icon {
@@ -413,6 +477,9 @@ input::placeholder {
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.85rem;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  animation-delay: 0.5s;
 }
 
 .signup-link a {
@@ -421,16 +488,38 @@ input::placeholder {
   font-weight: 600;
   margin-left: 5px;
   transition: color 0.3s ease;
+  position: relative;
 }
 
 .signup-link a:hover {
   color: rgba(138, 43, 226, 1);
-  text-decoration: underline;
+}
+
+.signup-link a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: rgba(138, 43, 226, 1);
+  transition: width 0.3s ease;
+}
+
+.signup-link a:hover::after {
+  width: 100%;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes fadeInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Responsive styles */
